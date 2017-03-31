@@ -1,0 +1,29 @@
+{
+  "name": "chatting",
+  "version": "1.0.0",
+  "description": "chat con node js",
+  "main": "servidor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsmorales/chat_nodejs.git"
+  },
+  "keywords": [
+    "chat",
+    "chatting"
+  ],
+  "author": "jsmorales",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jsmorales/chat_nodejs/issues"
+  },
+  "homepage": "https://github.com/jsmorales/chat_nodejs#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "express": "^4.15.2",
+    "jquery": "^3.2.1",
+    "socket.io": "^1.7.3"
+  }
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chatting</title>
+	<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap-theme.css">
+	<script type="text/javascript" src="node_modules/jquery/dist/jquery.js"></script>
+	<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+	<style>
+		#seccionPrincipal {
+			display: none;
+		}
+
+		#seccionChat {
+			float: left;
+			padding: 10px;
+		}
+
+		#ventanaChat {
+			height: 400px;
+		}
+
+		#seccionUsuarios {
+			float: left;
+			padding: 10px;
+			margin-left: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2>Chatting!</h2>
+
+		<div id="seccionUsuario" class="jumbotron">
+			<p>Ingrese nombre de usuario:</p>
+			<div id="error" class="alert alert-warning" style="display: none;"></div>
+
+			<form id="formularioUsuario">
+				<div class="input-group">
+					<input id="usuario" class="form-control" placeholder="nombre de usuario">
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="submit">Enviar</button>
+					</span>
+				</div>
+			</form>
+		</div>
+
+		<div id="seccionPrincipal">
+			<div id="seccionChat" class="jumbotron col-xs-10">
+				<div id="vantanaChat"></div>
+				<form id="formularioChat">
+					<div class="input-group">
+						<input type="text" id="mensaje" class="form-control">
+						<span class="input-group-btn">
+							<button class="btn btn-primary">
+								Enviar
+							</button>
+						</span>
+					</div>
+				</form>
+			</div>
+			<div id="seccionUsuarios" class="jumbotron">
+				<h4>Usuarios</h4>
+				<div id="listaUsuarios"></div>
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>
