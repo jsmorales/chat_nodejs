@@ -18,6 +18,7 @@
 
 		#ventanaChat {
 			height: 400px;
+			overflow: auto;
 		}
 
 		#seccionUsuarios {
@@ -46,19 +47,45 @@
 		</div>
 
 		<div id="seccionPrincipal">
+
 			<div id="seccionChat" class="jumbotron col-xs-10">
-				<div id="vantanaChat"></div>
+				<div id="ventanaChat"></div>
 				<form id="formularioChat">
+					
 					<div class="input-group">
 						<input type="text" id="mensaje" class="form-control">
+						
 						<span class="input-group-btn">
+
+							
+
 							<button class="btn btn-primary">
 								Enviar
 							</button>
-						</span>
-					</div>
-				</form>
-			</div>
+
+						
+
+					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Meme <span class="caret"></span></button>
+					        
+					        <ul id="listaMemes" class="dropdown-menu dropdown-menu-right">
+					          <li class="meme" data-meme = "nerd.png"><a href="#"><img src="memes/nerd.png" class="img-rounded" width="20" height="20"> Nerd</a></li>
+					          <li class="meme" data-meme = "si_claro.png"><a href="#"><img src="memes/si_claro.png" class="img-rounded" width="20" height="20"> Bitch Please</a></li>
+					          <li class="meme" data-meme = "ay_si.jpg"><a href="#"><img src="memes/ay_si.jpg" class="img-rounded" width="20" height="20"> Ay si</a></li>
+					          <li class="meme" data-meme = "ayy_muchas_cosas.jpg"><a href="#"><img src="memes/ayy_muchas_cosas.jpg" class="img-rounded" width="20" height="20"> Ay muchas cosas</a></li>
+					          <li class="meme" data-meme = "challenge_accepted.jpg"><a href="#"><img src="memes/challenge_accepted.jpg" class="img-rounded" width="20" height="20"> Challenge accepted</a></li>
+					          <li class="meme" data-meme = "fuuuu.png"><a href="#"><img src="memes/fuuuu.png" class="img-rounded" width="20" height="20"> Fuck</a></li>
+					          <li class="meme" data-meme = "interesante.jpg"><a href="#"><img src="memes/interesante.jpg" class="img-rounded" width="20" height="20"> Interesante</a></li>
+					          <li class="meme" data-meme = "jackie.jpg"><a href="#"><img src="memes/jackie.jpg" class="img-rounded" width="20" height="20"> WTF???</a></li>
+					          <li class="meme" data-meme = "mother_of_god.jpg"><a href="#"><img src="memes/mother_of_god.jpg" class="img-rounded" width="20" height="20"> Mother of god</a></li>					          
+					        </ul>
+
+				      	</span>
+
+				    </div>
+
+				</form>				
+				</div>
+
 			<div id="seccionUsuarios" class="jumbotron">
 				<h4>Usuarios</h4>
 				<div id="listaUsuarios"></div>
@@ -66,5 +93,115 @@
 		</div>
 
 	</div>
+	<!-- Secarga este script porque ya se esta utilizando el modulo en el servidor.js-->
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		$(function(){
+
+			//variable para conectar al socket
+			var socket = io.connect()
+
+			//variables del DOM
+
+			//formularios
+			var formularioUsuario = $("#formularioUsuario")
+			var formularioChat = $("#formularioChat")
+
+			var usuario = $("#usuario")
+			var listaUsuarios = $("#listaUsuarios")
+			var mensaje = $("#mensaje")
+
+			var ventanaChat = $("#ventanaChat")
+
+			var listaMemes = $("#listaMemes")
+			//----------------------------------------------
+			socket.on("llenar meme", function(data){
+
+				console.log("LLenar los memes!")
+				console.log(data)
+
+				listaMemes.html('')
+
+				$.each(data.imgs, function(index, val) {
+					console.log(val)
+					listaMemes.append('<li class="meme" data-meme = "'+val+'"><a href="#"><img src="memes/'+val+'" class="img-rounded" width="20" height="20"> '+val+'</a></li>')
+				});
+			})
+			//----------------------------------------------
+			//funciones
+			formularioUsuario.submit(function(e) {
+				//se para el action
+				e.preventDefault()
+				//se emite el evento nuevo usuario
+				socket.emit('nuevo usuario', usuario.val(), function(data){
+
+					if (data) {
+						//si todo sale bien oculta el mensaje de error
+						$("#error").hide()
+						$("#seccionUsuario").hide()
+						//se muestra la seccion principal del chat
+						$("#seccionPrincipal").show()
+					}else{
+						
+						$("#error").html("El nombre de usuario ya existe!")
+						$("#error").show()
+					}
+				})
+
+				usuario.val('')
+
+				//-----------------------------------------------
+				//escucha del evento actualizarUsuarios
+				//el callback trae el array de los usuarios que se 
+				//llenan dentro del servidor
+				socket.on("actualizarUsuarios", function(usuarios){
+					//pinta los nombres de usuario dentro de la lista de usuarios
+					
+					listaUsuarios.html("")
+
+					$.each(usuarios, function(index, val) {
+						
+						listaUsuarios.append("<span class='glyphicon glyphicon-user'></span> "+val+"<br>")
+					});
+				})
+
+				//---------------------------------------------
+				formularioChat.submit(function(e) {
+					e.preventDefault()
+					//---------------------------
+					//cuando se haga enviar en el formulario de chat
+					//se va a emitir el evento nuevo mensaje con el valor
+					//del text mensaje de este form
+					socket.emit('nuevo mensaje', mensaje.val())
+					mensaje.val('')
+				});
+
+				$(".meme").click(function(e) {
+					e.preventDefault()
+					console.log($(this).data('meme'))
+					socket.emit('meme', $(this).data('meme'))
+				});
+
+				socket.on('mensaje', function(data){
+					ventanaChat.append('<strong>'+data.usuario+'</strong>: '+data.mensaje+'<br>');
+					finalVentanaChat()
+				})
+
+				socket.on('muestra meme', function(data){
+					//console.log(data)
+					ventanaChat.append('<strong>'+data.usuario+'</strong>: '+'<img src="memes/'+data.meme+'" class="img-rounded" width="50" height="50">'+'<br>');
+					finalVentanaChat()
+				})
+			});
+
+						
+			self.finalVentanaChat = function (){
+				//se hace la animacion pero con el heigth del div
+				var altura = ventanaChat[0].scrollHeight;
+				//console.log(altura+"px")
+				ventanaChat.animate({scrollTop:altura+"px"},10);
+			}
+		})
+	</script>
 </body>
 </html>
