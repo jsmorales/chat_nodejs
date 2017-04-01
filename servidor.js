@@ -5,6 +5,7 @@ var http = require('http')
 
 var socket = require('socket.io')
 //--------------------------------------------------------------------
+//para leer los archivos de la carpeta memes
 var fs = require('fs');
 
 var archivos = fs.readdirSync("memes")
@@ -49,7 +50,7 @@ io.on('connection', function(socket){
 
 	//emite el evento llenar meme
 	io.emit('llenar meme', {imgs: archivos})
-	console.log("llanar meme?")
+	console.log("llenar meme")
 
 	
 	//cuando se conecta se revisa si hay un evento de tipo
@@ -92,9 +93,10 @@ io.on('connection', function(socket){
 
 	//evento de desconexion
 	socket.on('disconnect', function(data){
+		console.log('Desconectado '+socket.usuario)		
+		io.emit('mensaje', {mensaje: '--> Desconectado!', usuario: socket.usuario})
 		usuarios.splice(usuarios.indexOf(socket.usuario), 1)
 		actualizarUsuarios()
-		io.emit('mensaje', {mensaje: '--> Desconectado!', usuario: socket.usuario})
 	})
 
 })

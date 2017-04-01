@@ -123,8 +123,36 @@
 				listaMemes.html('')
 
 				$.each(data.imgs, function(index, val) {
-					console.log(val)
+					//console.log(val)
 					listaMemes.append('<li class="meme" data-meme = "'+val+'"><a href="#"><img src="memes/'+val+'" class="img-rounded" width="20" height="20"> '+val+'</a></li>')
+				});
+
+				//por si ya existe el click en .meme
+
+				$(".meme").unbind("click");
+
+				$(".meme").click(function(e) {
+					e.preventDefault()
+					console.log($(this).data('meme'))
+					socket.emit('meme', $(this).data('meme'))
+				});
+
+				console.log('click meme')
+			})
+
+			//----------------------------------------------
+			//-----------------------------------------------
+			//escucha del evento actualizarUsuarios
+			//el callback trae el array de los usuarios que se 
+			//llenan dentro del servidor
+			socket.on("actualizarUsuarios", function(usuarios){
+				//pinta los nombres de usuario dentro de la lista de usuarios
+				
+				listaUsuarios.html("")
+
+				$.each(usuarios, function(index, val) {
+					
+					listaUsuarios.append("<span class='glyphicon glyphicon-user'></span> "+val+"<br>")
 				});
 			})
 			//----------------------------------------------
@@ -141,6 +169,10 @@
 						$("#seccionUsuario").hide()
 						//se muestra la seccion principal del chat
 						$("#seccionPrincipal").show()
+						/*
+						ventanaChat.html("")
+
+						ventanaChat.append(ventanaChat[0].innerHTML)*/
 					}else{
 						
 						$("#error").html("El nombre de usuario ya existe!")
@@ -150,20 +182,7 @@
 
 				usuario.val('')
 
-				//-----------------------------------------------
-				//escucha del evento actualizarUsuarios
-				//el callback trae el array de los usuarios que se 
-				//llenan dentro del servidor
-				socket.on("actualizarUsuarios", function(usuarios){
-					//pinta los nombres de usuario dentro de la lista de usuarios
-					
-					listaUsuarios.html("")
-
-					$.each(usuarios, function(index, val) {
-						
-						listaUsuarios.append("<span class='glyphicon glyphicon-user'></span> "+val+"<br>")
-					});
-				})
+				
 
 				//---------------------------------------------
 				formularioChat.submit(function(e) {
@@ -174,12 +193,6 @@
 					//del text mensaje de este form
 					socket.emit('nuevo mensaje', mensaje.val())
 					mensaje.val('')
-				});
-
-				$(".meme").click(function(e) {
-					e.preventDefault()
-					console.log($(this).data('meme'))
-					socket.emit('meme', $(this).data('meme'))
 				});
 
 				socket.on('mensaje', function(data){
