@@ -26,6 +26,11 @@
 			padding: 10px;
 			margin-left: 5px;
 		}
+
+		.ulMemes{
+			overflow: auto;
+    		max-height: 300px;
+		}
 	</style>
 </head>
 <body>
@@ -55,28 +60,16 @@
 					<div class="input-group">
 						<input type="text" id="mensaje" class="form-control">
 						
-						<span class="input-group-btn">
-
+						<span class="input-group-btn dropup">
 							
-
 							<button class="btn btn-primary">
 								Enviar
-							</button>
-
-						
+							</button>						
 
 					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Meme <span class="caret"></span></button>
 					        
-					        <ul id="listaMemes" class="dropdown-menu dropdown-menu-right">
-					          <li class="meme" data-meme = "nerd.png"><a href="#"><img src="memes/nerd.png" class="img-rounded" width="20" height="20"> Nerd</a></li>
-					          <li class="meme" data-meme = "si_claro.png"><a href="#"><img src="memes/si_claro.png" class="img-rounded" width="20" height="20"> Bitch Please</a></li>
-					          <li class="meme" data-meme = "ay_si.jpg"><a href="#"><img src="memes/ay_si.jpg" class="img-rounded" width="20" height="20"> Ay si</a></li>
-					          <li class="meme" data-meme = "ayy_muchas_cosas.jpg"><a href="#"><img src="memes/ayy_muchas_cosas.jpg" class="img-rounded" width="20" height="20"> Ay muchas cosas</a></li>
-					          <li class="meme" data-meme = "challenge_accepted.jpg"><a href="#"><img src="memes/challenge_accepted.jpg" class="img-rounded" width="20" height="20"> Challenge accepted</a></li>
-					          <li class="meme" data-meme = "fuuuu.png"><a href="#"><img src="memes/fuuuu.png" class="img-rounded" width="20" height="20"> Fuck</a></li>
-					          <li class="meme" data-meme = "interesante.jpg"><a href="#"><img src="memes/interesante.jpg" class="img-rounded" width="20" height="20"> Interesante</a></li>
-					          <li class="meme" data-meme = "jackie.jpg"><a href="#"><img src="memes/jackie.jpg" class="img-rounded" width="20" height="20"> WTF???</a></li>
-					          <li class="meme" data-meme = "mother_of_god.jpg"><a href="#"><img src="memes/mother_of_god.jpg" class="img-rounded" width="20" height="20"> Mother of god</a></li>					          
+					        <ul id="listaMemes" class="dropdown-menu dropdown-menu-right ulMemes">
+					          
 					        </ul>
 
 				      	</span>
@@ -128,7 +121,6 @@
 				});
 
 				//por si ya existe el click en .meme
-
 				$(".meme").unbind("click");
 
 				$(".meme").click(function(e) {
