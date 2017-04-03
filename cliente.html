@@ -28,8 +28,15 @@
 		}
 
 		.ulMemes{
-			overflow: auto;
+			/*overflow: auto;*/
     		max-height: 300px;
+    		width: 250px;
+		    width: 230px;
+    		padding: 20px;
+		}
+
+		.ulMemes: div{
+			padding: 5px;
 		}
 	</style>
 </head>
@@ -68,9 +75,9 @@
 
 					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Meme <span class="caret"></span></button>
 					        
-					        <ul id="listaMemes" class="dropdown-menu dropdown-menu-right ulMemes">
+					        <div id="listaMemes" class="dropdown-menu dropdown-menu-right ulMemes">
 					          
-					        </ul>
+					        </div>
 
 				      	</span>
 
@@ -114,10 +121,37 @@
 				console.log(data)
 
 				listaMemes.html('')
+				
+				var contador = 0;
+
+				var divFila = '<div class="row">';
+				var divFilaFin = '</div>';
+
+				var div_cotenido = '';
 
 				$.each(data.imgs, function(index, val) {
-					//console.log(val)
-					listaMemes.append('<li class="meme" data-meme = "'+val+'"><a href="#"><img src="memes/'+val+'" class="img-rounded" width="20" height="20"> '+val+'</a></li>')
+					
+					console.log(index)	
+					
+
+					if (contador <= 3 ) {
+						console.log(contador)
+						console.log(val)
+
+						div_cotenido += '<div class="meme col-xs-3" data-meme = "'+val+'"><a href="#" title="'+val+'"><img src="memes/'+val+'" class="img-rounded" width="30" height="30"> </a></div>'
+
+						
+						//listaMemes.append('<div class="meme col-md-1" data-meme = "'+val+'"><a href="#" title="'+val+'"><img src="memes/'+val+'" class="img-rounded" width="20" height="20"> </a></div>')
+					} else {
+						listaMemes.append(divFila+div_cotenido+divFilaFin)
+						console.log(val)
+						div_cotenido = '';
+						div_cotenido += '<div class="meme col-xs-3" data-meme = "'+val+'"><a href="#" title="'+val+'"><img src="memes/'+val+'" class="img-rounded" width="30" height="30"> </a></div>'
+						contador = 0;
+					}
+
+					contador ++;
+					
 				});
 
 				//por si ya existe el click en .meme
