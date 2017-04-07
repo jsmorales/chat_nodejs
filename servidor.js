@@ -127,7 +127,7 @@ io.on('connection', function(socket){
 			if (el == socket.usuario) {
 				usuarios.splice(usuarios.indexOf(socket.usuario), 1)
 				console.log('Desconectado '+socket.usuario)		
-				io.emit('mensaje', {mensaje: '--> Desconectado!', usuario: socket.usuario})
+				io.emit('mensaje', {mensaje: '--> Desconectado!', usuario: socket.usuario, fechaT: getFechaT()})
 			}	
 		});
 
