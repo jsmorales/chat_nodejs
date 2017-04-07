@@ -270,6 +270,12 @@
 				socket.on('stop_flasT', function(){
 					window.stopFlashTitle()
 				})*/
+							
+			    window.onbeforeunload = function (event) {
+				  //logout();				  
+				  var msg = "Está segur@ de recargar la pagina?, Si recarga pierde la conexion.";				  
+				  return msg;
+				};
 			});
 						
 			self.finalVentanaChat = function (){
@@ -285,6 +291,7 @@
 				window.stopFlashTitle()
 				console.log("Focus en la ventana!")
 			});
+
 		})
 	</script>
 </body>
