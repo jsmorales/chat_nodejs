@@ -1,0 +1,36 @@
+#seccionPrincipal {
+	display: none;
+}
+
+#seccionChat {
+	float: left;
+	padding: 10px;
+}
+
+#ventanaChat {
+	height: 400px;
+	overflow: auto;
+}
+
+#seccionUsuarios {
+	float: left;
+	padding: 10px;
+	margin-left: 5px;
+}
+
+#accion_cliente{
+	font-size: 15px;
+	margin-left: 20px;
+}
+
+.ulMemes{
+	/*overflow: auto;*/
+	max-height: 300px;
+	width: 250px;
+    width: 230px;
+	padding: 20px;
+}
+
+.ulMemes: div{
+	padding: 5px;
+}

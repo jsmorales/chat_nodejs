@@ -6,39 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap-theme.css">
 	<script type="text/javascript" src="node_modules/jquery/dist/jquery.js"></script>
 	<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
-	<style>
-		#seccionPrincipal {
-			display: none;
-		}
-
-		#seccionChat {
-			float: left;
-			padding: 10px;
-		}
-
-		#ventanaChat {
-			height: 400px;
-			overflow: auto;
-		}
-
-		#seccionUsuarios {
-			float: left;
-			padding: 10px;
-			margin-left: 5px;
-		}
-
-		.ulMemes{
-			/*overflow: auto;*/
-    		max-height: 300px;
-    		width: 250px;
-		    width: 230px;
-    		padding: 20px;
-		}
-
-		.ulMemes: div{
-			padding: 5px;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="estilos/estilos.css">
 </head>
 <body>
 	<div class="container">
@@ -50,7 +18,7 @@
 
 			<form id="formularioUsuario">
 				<div class="input-group">
-					<input id="usuario" class="form-control" placeholder="nombre de usuario">
+					<input id="usuario" class="form-control" placeholder="nombre de usuario" required="true">
 					<span class="input-group-btn">
 						<button class="btn btn-primary" type="submit">Enviar</button>
 					</span>
@@ -65,7 +33,7 @@
 				<form id="formularioChat">
 					
 					<div class="input-group">
-						<input type="text" id="mensaje" class="form-control">
+						<input type="text" id="mensaje" class="form-control" required="true" autocomplete="false">
 						
 						<span class="input-group-btn dropup">
 							
@@ -83,6 +51,10 @@
 
 				    </div>
 
+				    <div class="row">
+				    	<p id="accion_cliente"></p>
+				    </div>
+
 				</form>				
 				</div>
 
@@ -96,6 +68,7 @@
 	<!-- Secarga este script porque ya se esta utilizando el modulo en el servidor.js-->
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
+		
 		$(function(){
 
 			//variable para conectar al socket
@@ -114,6 +87,32 @@
 			var ventanaChat = $("#ventanaChat")
 
 			var listaMemes = $("#listaMemes")
+
+			var accion_cliente = $("#accion_cliente")
+			//----------------------------------------------
+			var titleOriginal = document.title;
+			var intervalB = 0;
+			self.blinkInt = 0;
+			
+			window.startFlashTitle = function(titulo){
+
+				if (blinkInt == 0) {
+
+					document.title = (document.title == titleOriginal) ? titulo : titleOriginal;
+				
+					blinkInt = setInterval(function(){
+						document.title = (document.title == titleOriginal) ? titulo : titleOriginal;
+					}, 1000)
+
+				}
+								
+			}
+
+			window.stopFlashTitle = function(){
+				clearInterval(blinkInt)
+				document.title = titleOriginal;
+				blinkInt = 0;
+			}
 			//----------------------------------------------
 			socket.on("llenar meme", function(data){
 
@@ -222,17 +221,56 @@
 				});
 
 				socket.on('mensaje', function(data){
-					ventanaChat.append('<strong>'+data.usuario+'</strong>: '+data.mensaje+'<br>');
+					console.log(data)
+					ventanaChat.append(data.fechaT+' <strong>'+data.usuario+'</strong>: '+data.mensaje+'<br>');
 					finalVentanaChat()
+					//validar si esta en la ventana activa, 
+					//si esta minimizada manda el title flash
+					//window.startFlashTitle("Nuevo mensaje de "+data.usuario+"...")
+
+					if (document.hidden == true ) {
+						window.startFlashTitle("Nuevo mensaje de "+data.usuario+"...")
+					}
 				})
+				/**/
+								
+
+				//evento donde captura la accion quien esta escribiendo-----------------------------
+
+				var tiempo;			
+
+				mensaje.keydown(function(event) {					
+					socket.emit('escribiendo mensaje')
+					//clearTimeout(tiempo)								
+				});
+
+				socket.on('escribiendo', function(data){													
+					
+					accion_cliente.html("<span class='glyphicon glyphicon-pencil'></span> "+data.usuario+" está escribiendo...")
+
+					tiempo = setTimeout(function(){
+						accion_cliente.html("")
+					},2000)
+					
+				})
+				//----------------------------------------------------------------------------------
 
 				socket.on('muestra meme', function(data){
 					//console.log(data)
-					ventanaChat.append('<strong>'+data.usuario+'</strong>: '+'<img src="memes/'+data.meme+'" class="img-rounded" width="50" height="50">'+'<br>');
+					ventanaChat.append(data.fechaT+' <strong>'+data.usuario+'</strong>: '+'<img src="memes/'+data.meme+'" class="img-rounded" width="50" height="50">'+'<br>');
 					finalVentanaChat()
-				})
-			});
 
+					if (document.hidden == true ) {
+						window.startFlashTitle("Nuevo meme de "+data.usuario+"...")
+					}
+				})
+
+				//-----------------------------------------------------------------------------------
+				/*
+				socket.on('stop_flasT', function(){
+					window.stopFlashTitle()
+				})*/
+			});
 						
 			self.finalVentanaChat = function (){
 				//se hace la animacion pero con el heigth del div
@@ -240,6 +278,13 @@
 				//console.log(altura+"px")
 				ventanaChat.animate({scrollTop:altura+"px"},10);
 			}
+
+			$(window).on('focus', function(event) {				
+				//emitir evento para que desde el server pare el flashTitle
+				//socket.emit('focus_window')
+				window.stopFlashTitle()
+				console.log("Focus en la ventana!")
+			});
 		})
 	</script>
 </body>

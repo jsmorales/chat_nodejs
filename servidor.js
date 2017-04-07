@@ -36,6 +36,8 @@ app.use('/node_modules', express.static('node_modules'))
 
 app.use('/memes', express.static('memes'))
 
+app.use('/estilos', express.static('estilos'))
+
 //--------------------------------------------------------------------
 //peticion get del home
 app.get('/', function(llamado, respuesta){
@@ -43,7 +45,18 @@ app.get('/', function(llamado, respuesta){
 
 })
 //--------------------------------------------------------------------
+function getFechaT(){
+	var date;
+	date = new Date();
+	date = date.getFullYear() + '-' +
+	    ('00' + (date.getMonth()+1)).slice(-2) + '-' +
+	    ('00' + date.getDate()).slice(-2) + ' ' +
+	    ('00' + (date.getHours())).slice(-2) + ':' + 
+	    ('00' + (date.getMinutes())).slice(-2) + ':' +
+	    ('00' + (date.getSeconds())).slice(-2);
 
+	return date;
+}
 //--------------------------------------------------------------------
 //Peticiones de connexion al socket
 io.on('connection', function(socket){
@@ -51,7 +64,7 @@ io.on('connection', function(socket){
 	//emite el evento llenar meme
 	io.emit('llenar meme', {imgs: archivos})
 	console.log("llenar meme")
-
+	console.log(getFechaT())
 	
 	//cuando se conecta se revisa si hay un evento de tipo
 	//nuevo usuario que es emitido desde el cliente
@@ -72,18 +85,27 @@ io.on('connection', function(socket){
 			actualizarUsuarios()
 
 			console.log(socket.usuario)
-			io.emit('mensaje', {mensaje: '--> Conectado!', usuario: socket.usuario})
+
+			io.emit('mensaje', {mensaje: '--> Conectado!', usuario: socket.usuario, fechaT: getFechaT()})
 		}
 	})
 
 	socket.on('nuevo mensaje', function(mensaje){
-		io.emit('mensaje', {mensaje: mensaje, usuario: socket.usuario})
+		io.emit('mensaje', {mensaje: mensaje, usuario: socket.usuario, fechaT: getFechaT()})
+	})
+
+	socket.on('escribiendo mensaje', function(){
+		io.emit('escribiendo', {usuario: socket.usuario})
 	})
 
 	socket.on('meme', function(nombre){
 		console.log(nombre)
-		io.emit('muestra meme', {meme: nombre, usuario: socket.usuario})
+		io.emit('muestra meme', {meme: nombre, usuario: socket.usuario, fechaT: getFechaT()})
 	})
+	/*
+	socket.on('focus_window', function(){
+		io.emit('stop_flasT');
+	})*/
 
 	function actualizarUsuarios(){
 		//emite el evento con el array que se esta llenando
@@ -91,12 +113,28 @@ io.on('connection', function(socket){
 		io.emit('actualizarUsuarios', usuarios)
 	}
 
-	//evento de desconexion
+	//evento de desconexion que es carga de pagina
 	socket.on('disconnect', function(data){
-		console.log('Desconectado '+socket.usuario)		
-		io.emit('mensaje', {mensaje: '--> Desconectado!', usuario: socket.usuario})
-		usuarios.splice(usuarios.indexOf(socket.usuario), 1)
+		
+		//recorre el array si el nombre de usuario esta dentro
+		//del array si elimina el mismo y lo desconecta de lo 
+		//contrario no
+		
+		usuarios.forEach(function(el, index) {
+			console.log(index)
+			console.log(el)
+
+			if (el == socket.usuario) {
+				usuarios.splice(usuarios.indexOf(socket.usuario), 1)
+				console.log('Desconectado '+socket.usuario)		
+				io.emit('mensaje', {mensaje: '--> Desconectado!', usuario: socket.usuario})
+			}	
+		});
+
 		actualizarUsuarios()
+
+		//console.log(usuarios)
+		//console.log(usuarios.indexOf(socket.usuario))
 	})
 
 })

@@ -25,5 +25,11 @@
     "express": "^4.15.2",
     "jquery": "^3.2.1",
     "socket.io": "^1.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "dev": "nodemon servidor.js"
   }
 }
